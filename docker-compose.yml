@@ -1,0 +1,62 @@
+version: '3'
+services:
+  nginx:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    restart: always
+    ports:
+      - 3000:80
+    depends_on:
+      - client
+      - server
+  postgres:
+    image: postgres:12.1
+    environment:
+      - POSTGRES_USER=complex
+      - POSTGRES_PASSWORD=complex
+  redis:
+    image: redis:5.0.7
+  client:
+    depends_on:
+      - redis
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /usr/app/node_modules
+      - ./client:/usr/app
+    ports:
+      - 3001:3000
+  server:
+    depends_on:
+      - postgres
+      - redis
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /usr/app/node_modules
+      - ./server:/usr/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=complex
+      - POSTGRES_USER=complex
+      - POSTGRES_PASSWORD=complex
+    ports:
+      - 3002:5000
+  worker:
+    depends_on:
+      - redis
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /usr/app/node_modules
+      - ./worker:/usr/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379

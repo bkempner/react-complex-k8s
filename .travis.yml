@@ -19,3 +19,15 @@ after_success:
   - docker push bkempner/react-complex-nginx
   - docker push bkempner/react-complex-server
   - docker push bkempner/react-complex-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: react-complex
+  env: ReactComplex-env
+  bucket_name: elasticbeanstalk-us-east-2-923204184425
+  bucket_path: react-complex
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY

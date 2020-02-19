@@ -49,7 +49,7 @@ export default function Fib() {
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <label>Enter your index</label>
+        <label>Yo dawg, enter your index</label>
         <input value={index} onChange={event => setIndex(event.target.value)} />
         <button>Submit</button>
       </form>
